@@ -67,6 +67,16 @@ jobs:
             wget -O /tmp/cd.bash https://raw.githubusercontent.com/Suro4ek/test-most/refs/heads/main/cd.bash
             chmod +x /tmp/cd.bash
             /tmp/cd.bash
+      - name: Send Telegram notification
+        if: always()
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            CI build status: ${{ job.status }}
+            Repository: ${{ github.repository }}
+            See details: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
   build-docker:
     needs: build
     runs-on: ubuntu-latest
