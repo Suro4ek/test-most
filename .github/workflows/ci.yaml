@@ -55,7 +55,7 @@ jobs:
           files: |
             build/artifact.tar.gz
       - name: CD
-        uses: appleboy/ssh-action@v1
+        uses: appleboy/ssh-action@v1.2.2
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
