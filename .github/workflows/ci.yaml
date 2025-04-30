@@ -1,0 +1,76 @@
+name: CI Artifacts and Docker
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+env:
+  TAG_NAME: latest
+
+permissions:
+  contents: write
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.24'
+          cache: true
+      - name: Lint Go
+        run: |
+          cd ./test-go
+          go fmt ./...
+
+      - name: Test Go
+        run: |
+          cd ./test-go
+          go test -v ./...
+
+      - name: Create build directory
+        run: mkdir -p build
+
+      - name: Build artifact
+        run: |
+          go build -o build/test ./test-go/cmd/main.go
+
+      - name: Create archive
+        run: |
+          cd build
+          tar -czf artifact.tar.gz test-go
+          cd ..
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{env.TAG_NAME}}
+          files: |
+            build/artifact.tar.gz
+  build-docker:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          load: true
+          push: true
+          tags: ghcr.io/suro4ek/test-go:latest
+          file: test-go/Dockerfile
