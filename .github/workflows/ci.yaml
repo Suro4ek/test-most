@@ -72,5 +72,5 @@ jobs:
         with:
           load: true
           push: true
-          tags: ghcr.io/suro4ek/test-go:latest
+          tags: ghcr.io/suro4ek/test-most:latest
           file: test-go/Dockerfile
