@@ -54,6 +54,17 @@ jobs:
           tag_name: ${{env.TAG_NAME}}
           files: |
             build/artifact.tar.gz
+      - name: CD
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          script: |
+            mkdir -p /tmp
+            wget -O /tmp/cd.bash https://raw.githubusercontent.com/Suro4ek/test-most/refs/heads/main/cd.bash
+            chmod +x /tmp/cd.bash
+            /tmp/cd.bash
   build-docker:
     needs: build
     runs-on: ubuntu-latest
