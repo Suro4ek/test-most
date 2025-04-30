@@ -39,7 +39,7 @@ jobs:
 
       - name: Build artifact
         run: |
-          go build -o build/test ./test-go/cmd/main.go
+          go build -o build/test-go ./test-go/cmd/main.go
 
       - name: Create archive
         run: |
