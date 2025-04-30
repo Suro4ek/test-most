@@ -2,7 +2,7 @@ FROM golang:1.24.2 AS builder
 
 COPY . /src
 WORKDIR /src
-RUN go build -o bin/server ./cmd/main.go
+RUN go build -o bin/server ./test-go/cmd/main.go
 
 FROM alpine:latest AS production
 
